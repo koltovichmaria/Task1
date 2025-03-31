@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форма регистрации</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+        .form-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-header h2 {
+            font-size: 24px;
+            color: #333;
+            margin: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="tel"],
+        .form-group input[type="email"],
+        .form-group input[type="date"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+
+        }
+        .form-group textarea {
+            resize: vertical;
+            height: 100px;
+        }
+        .form-group input[type="radio"],
+        .form-group input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        .form-group button {
+            background-color: #28a745;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .form-group button:hover {
+            background-color: #218838;
+        }
+        .message {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+
+            font-weight: 700;
+        }
+
+        .message > div {
+            padding: 5px 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+
+        .success {
+            border: 1px solid #0f0;
+            color: #0f0;
+        }
+
+        .fail {
+            color: #f00;
+            border: 1px solid #f00;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="form-header">
+            <h2>Форма регистрации</h2>
+        </div>
+        <form action="main.cgi" method="post">
+            <div class="form-group">
+                <label for="fio">ФИО:</label>
+                <input type="text" id="fio" name="fio" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Телефон:</label>
+                <input type="tel" id="phone" name="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="email">E-mail:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="birthdate">Дата рождения:</label>
+                <input type="date" id="birthdate" name="birthdate" required>
+            </div>
+            <div class="form-group">
+                <label>Пол:</label>
+                <label><input type="radio" id="male" name="gender" value="male" required> Мужской</label>
+                <label><input type="radio" id="female" name="gender" value="female" required> Женский</label>
+            </div>
+            <div class="form-group">
+                <label for="language">Любимый язык программирования:</label>
+                <select id="langs" name="langs[]" multiple required>
+                    <option value="pascal">Pascal</option>
+                    <option value="c">C</option>
+                    <option value="cpp">C++</option>
+                    <option value="javasript">JavaScript</option>
+                    <option value="php">PHP</option>
+                    <option value="python">Python</option>
+                    <option value="java">Java</option>
+                    <option value="haskell">Haskel</option>
+                    <option value="clojure">Clojure</option>
+                    <option value="prolog">Prolog</option>
+                    <option value="scala">Scala</option>
+                    <option value="go">Go</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="bio">Биография:</label>
+                <textarea id="bio" name="bio" required></textarea>
+            </div>
+            <div class="form-group">
+                <label><input type="checkbox" id="agreement" name="agreement" required> С контрактом ознакомлен(а)</label>
+            </div>
+            <div class="form-group">
+                <button type="submit">Сохранить</button>
+            </div>
+        </form>
+    </div>
+
+    {{ if . }}
+    <div class="message">
+        {{ range . }}
+            {{ if eq . "Данные успешно сохранены" }}
+        <div class="success"> {{ . }} </div>
+            {{ else }}
+        <div class="fail"> {{ . }} </div>
+            {{ end }}
+        {{ end }}
+    </div>
+    {{ end }}
+</body>
+</html>
