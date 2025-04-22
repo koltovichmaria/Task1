@@ -8,6 +8,7 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
+            margin-top: 50px;
             margin: 0;
             padding: 0;
             display: flex;
@@ -23,25 +24,31 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 500px;
+            position: relative;
         }
+        
         .form-header {
             text-align: center;
             margin-bottom: 20px;
         }
+        
         .form-header h2 {
             font-size: 24px;
             color: #333;
             margin: 0;
         }
+        
         .form-group {
             margin-bottom: 15px;
         }
+        
         .form-group label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
             color: #555;
         }
+        
         .form-group input[type="text"],
         .form-group input[type="tel"],
         .form-group input[type="email"],
@@ -54,16 +61,18 @@
             border-radius: 4px;
             font-size: 16px;
             box-sizing: border-box;
-
         }
+        
         .form-group textarea {
             resize: vertical;
             height: 100px;
         }
+        
         .form-group input[type="radio"],
         .form-group input[type="checkbox"] {
             margin-right: 10px;
         }
+        
         .form-group button {
             background-color: #28a745;
             color: #fff;
@@ -74,102 +83,139 @@
             cursor: pointer;
             width: 100%;
         }
+        
         .form-group button:hover {
             background-color: #218838;
         }
-        .message {
+        
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .error-field {
+            border-color: #dc3545 !important;
+        }
+        
+        .success-message {
+            color: #28a745;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .message-container {
             position: absolute;
-            top: 15px;
-            left: 15px;
-
-            font-weight: 700;
+            top: -50px;
+            left: 0;
+            right: 0;
+            text-align: center;
         }
-
-        .message > div {
-            padding: 5px 10px;
-            margin-bottom: 5px;
-            border-radius: 5px;
-            background-color: #fff;
+        
+        .message {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            position: relative;
+            top: 40px;
         }
-
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
         .success {
-            border: 1px solid #0f0;
-            color: #0f0;
-        }
-
-        .fail {
-            color: #f00;
-            border: 1px solid #f00;
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
         }
     </style>
 </head>
 <body>
     <div class="form-container">
+        {{if .Valid}}
+        <div class="message-container">
+            {{range .Valid}}
+                {{if eq . "Данные успешно сохранены"}}
+                    <div class="message success">{{.}}</div>
+                {{else}}
+                    <div class="message error">{{.}}</div>
+                {{end}}
+            {{end}}
+        </div>
+        {{end}}
+        
         <div class="form-header">
             <h2>Форма регистрации</h2>
         </div>
+        
         <form action="main.cgi" method="post">
             <div class="form-group">
                 <label for="fio">ФИО:</label>
-                <input type="text" id="fio" name="fio" required>
+                <input type="text" id="fio" name="fio" value="{{.FormData.fio}}">
             </div>
+            
             <div class="form-group">
                 <label for="phone">Телефон:</label>
-                <input type="tel" id="phone" name="phone" required>
+                <input type="tel" id="phone" name="phone" value="{{.FormData.phone}}">
             </div>
+            
             <div class="form-group">
                 <label for="email">E-mail:</label>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email" name="email" value="{{.FormData.email}}">
             </div>
+            
             <div class="form-group">
                 <label for="birthdate">Дата рождения:</label>
-                <input type="date" id="birthdate" name="birthdate" required>
+                <input type="date" id="birthdate" name="birthdate" value="{{.FormData.birthdate}}">
             </div>
+            
             <div class="form-group">
                 <label>Пол:</label>
-                <label><input type="radio" id="male" name="gender" value="male" required> Мужской</label>
-                <label><input type="radio" id="female" name="gender" value="female" required> Женский</label>
+                <label>
+                    <input type="radio" name="gender" value="male" {{if eq .FormData.gender "male"}}checked{{end}}> Мужской
+                </label>
+                <label>
+                    <input type="radio" name="gender" value="female" {{if eq .FormData.gender "female"}}checked{{end}}> Женский
+                </label>
             </div>
+            
             <div class="form-group">
                 <label for="language">Любимый язык программирования:</label>
-                <select id="langs" name="langs[]" multiple required>
-                    <option value="pascal">Pascal</option>
-                    <option value="c">C</option>
-                    <option value="cpp">C++</option>
-                    <option value="javasript">JavaScript</option>
-                    <option value="php">PHP</option>
-                    <option value="python">Python</option>
-                    <option value="java">Java</option>
-                    <option value="haskell">Haskel</option>
-                    <option value="clojure">Clojure</option>
-                    <option value="prolog">Prolog</option>
-                    <option value="scala">Scala</option>
-                    <option value="go">Go</option>
+                <select id="langs" name="langs[]" multiple>
+                    <option value="pascal" {{if .SavedLangs.pascal}}selected{{end}}>Pascal</option>
+                    <option value="c" {{if .SavedLangs.c}}selected{{end}}>C</option>
+                    <option value="cpp" {{if .SavedLangs.cpp}}selected{{end}}>C++</option>
+                    <option value="javascript" {{if .SavedLangs.javascript}}selected{{end}}>JavaScript</option>
+                    <option value="php" {{if .SavedLangs.php}}selected{{end}}>PHP</option>
+                    <option value="python" {{if .SavedLangs.python}}selected{{end}}>Python</option>
+                    <option value="java" {{if .SavedLangs.java}}selected{{end}}>Java</option>
+                    <option value="haskell" {{if .SavedLangs.haskell}}selected{{end}}>Haskell</option>
+                    <option value="clojure" {{if .SavedLangs.clojure}}selected{{end}}>Clojure</option>
+                    <option value="prolog" {{if .SavedLangs.prolog}}selected{{end}}>Prolog</option>
+                    <option value="scala" {{if .SavedLangs.scala}}selected{{end}}>Scala</option>
+                    <option value="go" {{if .SavedLangs.go}}selected{{end}}>Go</option>
                 </select>
             </div>
+            
             <div class="form-group">
                 <label for="bio">Биография:</label>
-                <textarea id="bio" name="bio" required></textarea>
+                <textarea id="bio" name="bio">{{.FormData.bio}}</textarea>
             </div>
+            
             <div class="form-group">
-                <label><input type="checkbox" id="agreement" name="agreement" required> С контрактом ознакомлен(а)</label>
+                <label>
+                    <input type="checkbox" name="agreement" required> С контрактом ознакомлен(а)
+                </label>
             </div>
+            
             <div class="form-group">
                 <button type="submit">Сохранить</button>
             </div>
         </form>
     </div>
-
-    {{ if . }}
-    <div class="message">
-        {{ range . }}
-            {{ if eq . "Данные успешно сохранены" }}
-        <div class="success"> {{ . }} </div>
-            {{ else }}
-        <div class="fail"> {{ . }} </div>
-            {{ end }}
-        {{ end }}
-    </div>
-    {{ end }}
 </body>
 </html>
